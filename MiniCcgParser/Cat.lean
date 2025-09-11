@@ -2,6 +2,7 @@
 inductive Dir where
   | Fwd -- /
   | Bwd -- \
+  deriving BEq
 
 def Dir.repr : Dir → String
   | .Fwd => "/"
@@ -13,6 +14,8 @@ inductive Cat where
   | NP
   | N
   | Fun (d : Dir) (x y : Cat) -- x / y or x \ y
+  deriving BEq
+
 
 -- Dir の略記
 infixl:30 " /> "  => Cat.Fun Dir.Fwd

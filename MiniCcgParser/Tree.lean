@@ -13,39 +13,43 @@ def Rule.repr : Rule → String
   | .Fc => ">B"
   | .Bc => "<B"
 
-/-- # 導出木 DTree (Derivation Tree) -/
-inductive DTree where
+/-- # 導出木 Tree (Derivation Tree) -/
+inductive Tree where
   | Leaf (c : Cat) (token : String)
-  | Node (c : Cat) (r : Rule) (left right : DTree)
+  | Node (c : Cat) (r : Rule) (left right : Tree)
 
-private def DTree.pre : Nat → String
+private def Tree.pre : Nat → String
   | 0 => ""
   | n + 1 => "| " ++ pre n
 
-private def DTree.reprAux (n : Nat) : DTree → String
+private def Tree.reprAux (n : Nat) : Tree → String
   | .Leaf c token =>
       pre n ++
       c.repr ++ " '" ++token ++ "'"
-  | .Node c r ldt rdt =>
+  | .Node c r lt rt =>
       pre n ++
       c.repr ++ "  [" ++ r.repr ++ "]\n" ++
-      reprAux (n + 1) ldt ++ "\n" ++
-      reprAux (n + 1) rdt
+      reprAux (n + 1) lt ++ "\n" ++
+      reprAux (n + 1) rt
 
-def DTree.repr : DTree → String := reprAux 0
+def Tree.repr : Tree → String := reprAux 0
 
-instance : Repr DTree where
-  reprPrec dt _ := DTree.repr dt
+instance : Repr Tree where
+  reprPrec dt _ := Tree.repr dt
 
-#eval DTree.Leaf .NP "John"
-#eval DTree.Leaf (.S \> .NP)  "sleeps"
+#eval Tree.Leaf .NP "John"
+#eval Tree.Leaf (.S \> .NP)  "sleeps"
 #eval
-  DTree.Node .S .Ba
+  Tree.Node .S .Ba
     (.Leaf .NP "John")
     (.Leaf (.S \> .NP) "Sleeps")
 #eval
-  DTree.Node .S .Ba
+  Tree.Node .S .Ba
     (.Node .NP .Fa
       (.Leaf (.NP /> .N) "the")
       (.Leaf .N "dog"))
     (.Leaf (.S \> .NP) "Sleeps")
+
+def Tree.cat : Tree → Cat
+  | .Leaf cat _ => cat
+  | .Node cat _ _ _ => cat
