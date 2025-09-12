@@ -1,10 +1,7 @@
 import MiniCcgParser.Cat
 
 abbrev Lexicon := List (String × List Cat)
--- 一つの語に対して複数のカテゴリがあり得るのでとりあえず List Cat
--- 辞書型のほうがよい？
 
--- 辞書
 def lexicon : Lexicon :=
   [
     ("John",    [.NP]),

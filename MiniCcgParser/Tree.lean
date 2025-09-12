@@ -1,4 +1,5 @@
 import MiniCcgParser.Cat
+import MiniCcgParser.Util
 
 /-- # 適用ルール -/
 inductive Rule where
@@ -18,24 +19,22 @@ inductive Tree where
   | Leaf (c : Cat) (token : String)
   | Node (c : Cat) (r : Rule) (left right : Tree)
 
-private def Tree.pre : Nat → String
-  | 0 => ""
-  | n + 1 => "| " ++ pre n
-
-private def Tree.reprAux (n : Nat) : Tree → String
+private def Tree.toStringAux (n : Nat) : Tree → String
   | .Leaf c token =>
       pre n ++
-      c.repr ++ " '" ++token ++ "'"
+      c.toString ++ " '" ++token ++ "'"
   | .Node c r lt rt =>
       pre n ++
-      c.repr ++ "  [" ++ r.repr ++ "]\n" ++
-      reprAux (n + 1) lt ++ "\n" ++
-      reprAux (n + 1) rt
+      c.toString ++ "  [" ++ r.repr ++ "]\n" ++
+      toStringAux (n + 1) lt ++ "\n" ++
+      toStringAux (n + 1) rt
+  where
+    pre (n : Nat) : String := "| ".replicate n
 
-def Tree.repr : Tree → String := reprAux 0
+def Tree.toString : Tree → String := toStringAux 0
 
-instance : Repr Tree where
-  reprPrec dt _ := Tree.repr dt
+instance : ToString Tree where
+  toString := Tree.toString
 
 #eval Tree.Leaf .NP "John"
 #eval Tree.Leaf (.S \> .NP)  "sleeps"
