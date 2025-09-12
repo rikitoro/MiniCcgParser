@@ -28,23 +28,16 @@ def bcomp : Cat → Cat → Option Cat
 #eval bcomp (.NP \> .S) (.NP \> .NP)
 
 def applyRules (lt rt : Tree) : List Tree :=
-  [
-    match fapp lt.cat rt.cat with
-    | some x  => [Tree.Node x .Fa lt rt]
-    | none    => []
-    ,
-    match bapp lt.cat rt.cat with
-    | some x  => [Tree.Node x .Ba lt rt]
-    | none    => []
-    ,
-    match fcomp lt.cat rt.cat with
-    | some x  => [Tree.Node x .Fc lt rt]
-    | none    => []
-    ,
-    match bcomp lt.cat rt.cat with
-    | some x  => [Tree.Node x .Bc lt rt]
-    | none    => []
-  ].flatten
+  trial (fapp lt.cat rt.cat) .Fa ++
+  trial (bapp lt.cat rt.cat) .Ba ++
+  trial (fcomp lt.cat rt.cat) .Fc ++
+  trial (bcomp lt.cat rt.cat) .Bc
+  where
+    trial (ocat : Option Cat) (r : Rule) : List Tree :=
+      match ocat with
+      | some c => [.Node c r lt rt]
+      | none   => []
+
 
 #eval
   let lt := Tree.Leaf .NP "John"
