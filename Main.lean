@@ -1,10 +1,15 @@
 import MiniCcgParser
 
+def sample := "John runs"
+
 
 def main (args : List String) : IO Unit := do
-  let sentence : String := " ".intercalate args
+  let sentence := match args with
+    | [] => sample
+    | x :: _ => x
   let trees : List Tree := parseCCG lexicon sentence
 
+  IO.print "target sentence : "
   IO.println sentence
   for t in trees do
     IO.print "---"

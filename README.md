@@ -15,8 +15,8 @@ $ lake build
 実行時に文を引数として与えると、解析結果が表示されます。
 
 ```
-$ .lake/build/bin/miniccparser Mary likes the cat
-Mary likes the cat
+$ .lake/build/bin/miniccgparser "Mary likes the cat"
+target sentence : Mary likes the cat
 ---
 S  [<]
 | NP 'Mary'

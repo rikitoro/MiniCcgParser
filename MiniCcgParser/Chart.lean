@@ -132,9 +132,7 @@ def Chart.fillChart (lex : Lexicon) (toks : List String) : Chart := Id.run do
   Chart.fillChart lexicon ["John", "sees", "the", "dog"] |>.reverse
 #eval
   Chart.fillChart lexicon ["the", "dog", "likes", "John"] |>.reverse
-
--- #eval
---   Chart.fillChart lexicon ["John", "and", "the", "dog", "likes", "Mary"] |>.reverse
-
--- #eval
---   Chart.fillChart lexicon ["John", "sleeps", "and", "Mary", "sees", "the", "cat"] |>.reverse
+#eval
+  Chart.fillChart lexicon ["John", "and", "the", "dog", "likes", "Mary"] |>.reverse
+#eval
+  Chart.fillChart lexicon ["John", "sleeps", "and", "Mary", "sees", "the", "cat"] |>.reverse

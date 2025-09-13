@@ -7,6 +7,7 @@ def lexicon : Lexicon :=
     ("John",    [.NP]),
     ("Mary",    [.NP]),
     ("sleeps",  [.S \> .NP]),
+    ("runs",    [.S \> .NP]),
     ("likes",   [.S \> .NP /> .NP]),
     ("sees",    [.S \> .NP /> .NP]),
     ("the",     [.NP /> .N]),
