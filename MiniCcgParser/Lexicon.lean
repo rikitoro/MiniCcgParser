@@ -13,7 +13,7 @@ def lexicon : Lexicon :=
     ("a",       [.NP /> .N]),
     ("cat",     [.N]),
     ("dog",     [.N]),
-    -- ("and",     [.NP \> .NP /> .NP, .S \> .S /> .S]),
+    ("and",     [.NP \> .NP /> .NP, .S \> .S /> .S]),
   ]
 
 #eval lexicon
