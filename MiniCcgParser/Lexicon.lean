@@ -17,3 +17,12 @@ def lexicon : Lexicon :=
 
 #eval lexicon
 #eval lexicon[3]?
+
+def Lexicon.lookup (lex : Lexicon) (tok : String) : List Cat :=
+  match lex.find? (·.fst == tok) with
+  | some e => e.snd
+  | none   => []
+
+#eval lexicon.lookup "John"
+#eval lexicon.lookup "likes"
+#eval lexicon.lookup "hoge"
