@@ -36,14 +36,6 @@ def Span.toString (ij : Span) : String :=
 instance : ToString Span where
   toString := Span.toString
 
--- def Span.arange (ij : Span) : List Nat :=
---   let ⟨i, j⟩ := ij
---   List.arange i j
-
--- #eval Span.arange ⟨2, 4⟩
--- #eval Span.arange ⟨2, 1⟩
-
-
 
 structure Cell where
   span  : Span
@@ -115,7 +107,7 @@ def Chart.fillChart (lex : Lexicon) (toks : List String) : Chart := Id.run do
       let spans : List Span := is.map (fun i => (i, i + n))
       for span in spans do
         let ⟨i, j⟩ := span
-        -- span 左右二つに分割
+        -- span 左右二つに分割して、導出木を applyRules で結合
         let mut ts : List Tree := []
         for k in List.arange (i + 1) j do
           let ls : Span := (i, k)
@@ -131,19 +123,18 @@ def Chart.fillChart (lex : Lexicon) (toks : List String) : Chart := Id.run do
       return ch'
 
 
--- #eval
---   let len := 3
---   let n := 2
---   List.arange 0 (len - n + 1) |>.map (fun i => (i, i + n))
-
-
--- #eval
---   let len := 3
---   let n := 3
---   List.arange 0 (len - n + 1)
-
 #eval Chart.fillChart lexicon ["John"]
-#eval Chart.fillChart lexicon ["John", "sleeps"] |>.reverse
-#eval Chart.fillChart lexicon ["John", "likes", "Mary"] |>.reverse
 #eval
- Chart.fillChart lexicon ["John", "sees", "the", "dog"] |>.reverse
+  Chart.fillChart lexicon ["John", "sleeps"] |>.reverse
+#eval
+  Chart.fillChart lexicon ["John", "likes", "Mary"] |>.reverse
+#eval
+  Chart.fillChart lexicon ["John", "sees", "the", "dog"] |>.reverse
+#eval
+  Chart.fillChart lexicon ["the", "dog", "likes", "John"] |>.reverse
+
+-- #eval
+--   Chart.fillChart lexicon ["John", "and", "the", "dog", "likes", "Mary"] |>.reverse
+
+-- #eval
+--   Chart.fillChart lexicon ["John", "sleeps", "and", "Mary", "sees", "the", "cat"] |>.reverse
