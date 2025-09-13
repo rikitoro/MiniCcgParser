@@ -1,5 +1,6 @@
 import MiniCcgParser.Tree
 import MiniCcgParser.Lexicon
+import MiniCcgParser.ApplyRule
 
 /- CYK argorithm
 
@@ -35,13 +36,22 @@ def Span.toString (ij : Span) : String :=
 instance : ToString Span where
   toString := Span.toString
 
+-- def Span.arange (ij : Span) : List Nat :=
+--   let ⟨i, j⟩ := ij
+--   List.arange i j
+
+-- #eval Span.arange ⟨2, 4⟩
+-- #eval Span.arange ⟨2, 1⟩
+
+
+
 structure Cell where
   span  : Span
   trees : List Tree
 
 def Cell.toString (cell : Cell) : String :=
   let ⟨ij, ts⟩ := cell
-  "⟪" ++ ij.toString ++ " : " ++ts.toString ++ "⟫"
+  "\n⟪" ++ ij.toString ++ " : " ++ts.toString ++ "⟫"
 
 instance : ToString Cell where
   toString := Cell.toString
@@ -54,7 +64,7 @@ abbrev Chart := List Cell
 -- ch : Chart において、Span と Cell は1対1対応していることを前提とする
 --      i.e. 同じ (i, j) を持つ Cell はないとする
 
-def Chart.loopup (ch : Chart) (ij : Span): List Tree :=
+def Chart.lookup (ch : Chart) (ij : Span): List Tree :=
   match ch.find? (·.span == ij) with
   | some e => e.trees
   | none   => []
@@ -86,14 +96,54 @@ def Chart.mkBase (lex : Lexicon) (toks : List String)  : Chart := Id.run do
 
 def Chart.fillChart (lex : Lexicon) (toks : List String) : Chart := Id.run do
   let len := toks.length
-  let ch := mkBase lex toks
 
-  if len < 2 then return ch  -- 早期リターン
-  -- 以下 2 ≤ len の場合
-  let mut n := 2
-  while n ≤ len do
-    fillChartAt n
-    n := n + 1
+  let mut ch := mkBase lex toks
+
+  if len ≤ 1 then return ch  -- 早期リターン
+  -- 以下 2 ≤ len の場合 : n = 2, 3, ..., len まで回す
+  for n in List.arange 2 (len + 1) do
+    ch := fillChartAt ch n
   return ch
+
   where
-    fillChartAt (n : Nat) := sorry
+    -- span = [i, i+n) のところの cell を埋めていく
+    fillChartAt (ch : Chart) (n : Nat) : Chart := Id.run do
+      let mut ch' := ch
+      -- 長さ n の span をすべて作る [0, n), [1, 1+n), .. [len-n, len)
+      let len := toks.length
+      let is : List Nat := List.arange 0 (len - n + 1)
+      let spans : List Span := is.map (fun i => (i, i + n))
+      for span in spans do
+        let ⟨i, j⟩ := span
+        -- span 左右二つに分割
+        let mut ts : List Tree := []
+        for k in List.arange (i + 1) j do
+          let ls : Span := (i, k)
+          let rs : Span := (k, j)
+          let lts : List Tree := ch.lookup ls
+          let rts : List Tree := ch.lookup rs
+
+          for lt in lts do
+            for rt in rts do
+              ts := applyRules lt rt ++ ts
+
+        ch' := ch'.insert span ts
+      return ch'
+
+
+-- #eval
+--   let len := 3
+--   let n := 2
+--   List.arange 0 (len - n + 1) |>.map (fun i => (i, i + n))
+
+
+-- #eval
+--   let len := 3
+--   let n := 3
+--   List.arange 0 (len - n + 1)
+
+#eval Chart.fillChart lexicon ["John"]
+#eval Chart.fillChart lexicon ["John", "sleeps"] |>.reverse
+#eval Chart.fillChart lexicon ["John", "likes", "Mary"] |>.reverse
+#eval
+ Chart.fillChart lexicon ["John", "sees", "the", "dog"] |>.reverse

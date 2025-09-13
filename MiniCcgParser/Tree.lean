@@ -31,7 +31,7 @@ private def Tree.toStringAux (n : Nat) : Tree → String
   where
     pre (n : Nat) : String := "| ".replicate n
 
-def Tree.toString : Tree → String := toStringAux 0
+def Tree.toString (tree : Tree) : String := "\n" ++ tree.toStringAux 0
 
 instance : ToString Tree where
   toString := Tree.toString
