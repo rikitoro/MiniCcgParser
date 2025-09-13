@@ -14,3 +14,9 @@ def List.arange (i j : Nat) : List Nat :=
 #eval List.arange 2 3
 #eval List.arange 3 3
 #eval List.arange 4 3
+
+
+def String.toTokens (str : String) : List String :=
+  str.split (· == ' ') |>.filter (·.trim ≠ "")
+
+#eval "John likes a dog".toTokens
