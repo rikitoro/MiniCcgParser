@@ -5,16 +5,16 @@ import MiniCcgParser.Lexicon
 
 filledChart : Chart := [
 
-                  ⟪[0,3) : [S [<]
+                  ⟪[0,3) : [S [<]                                <== n = 3
                             | NP
                             | S\NP
                               | ...]⟫,
 
-          ⟪[0,2) : []⟫,          ⟪[1,3) : [S\NP [>]
+          ⟪[0,2) : []⟫,          ⟪[1,3) : [S\NP [>]             <== n = 2
                                             | (S\NP)/NP
                                             | NP]⟫,
 
-  ⟪[0,1) : [NP]⟫,   ⟪[1,2) : [(S\NP)/NP]⟫,    ⟪[2,3) : [NP]⟫    -- <- base
+  ⟪[0,1) : [NP]⟫,   ⟪[1,2) : [(S\NP)/NP]⟫,    ⟪[2,3) : [NP]⟫    <== base (n = 1)
 
 ]
 
@@ -85,9 +85,15 @@ def Chart.mkBase (lex : Lexicon) (toks : List String)  : Chart := Id.run do
 --
 
 def Chart.fillChart (lex : Lexicon) (toks : List String) : Chart := Id.run do
-  let n := toks.length
-  let chart := mkBase lex toks
+  let len := toks.length
+  let ch := mkBase lex toks
 
-  sorry
-
-  return chart
+  if len < 2 then return ch  -- 早期リターン
+  -- 以下 2 ≤ len の場合
+  let mut n := 2
+  while n ≤ len do
+    fillChartAt n
+    n := n + 1
+  return ch
+  where
+    fillChartAt (n : Nat) := sorry
