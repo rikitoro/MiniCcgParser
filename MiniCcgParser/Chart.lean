@@ -66,17 +66,27 @@ def Chart.insert (ch : Chart) (ij : Span) (ts : List Tree) :=
 
 --
 
-/-- token 列から chart の一番下の部分 base を作る -/
+/-- token 列から chart の一番下の部分 (スパン長さ n = 1) base を作る -/
 def Chart.mkBase (lex : Lexicon) (toks : List String)  : Chart := Id.run do
-  let mut ch : Chart := []
-  let mut i : Nat := 0
-  -- 左から token を見ていって cell を作って chart に追加 (末尾再帰で書けそう)
-  for tok in toks do
-    let cs : List Cat := lex.lookup tok
-    let ts : List Tree := cs.map (.Leaf · tok)
-    ch := ch.insert (i, i + 1) ts
-    i  := i + 1
-  return ch
+  aux 0 toks []
+  where
+    aux (i : Nat) (ts : List String) (ch : Chart): Chart :=
+      match ts with
+      | [] => ch
+      | t :: ts => aux (i + 1) ts (step i t ch)
+    step (i : Nat) (t : String) (ch : Chart) : Chart :=
+      let trees : List Tree := lex.lookup t |>.map (.Leaf · t)
+      ch.insert (i, i + 1) trees
+
+  -- let mut ch : Chart := []
+  -- let mut i : Nat := 0
+  -- -- 左から token を見ていって cell を作って chart に追加 (末尾再帰で書けそう)
+  -- for tok in toks do
+  --   let cs : List Cat := lex.lookup tok
+  --   let ts : List Tree := cs.map (.Leaf · tok)
+  --   ch := ch.insert (i, i + 1) ts
+  --   i  := i + 1
+  -- return ch
 
 #eval
   Chart.mkBase lexicon ["likes"]
