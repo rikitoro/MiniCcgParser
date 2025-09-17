@@ -20,3 +20,9 @@ def String.toTokens (str : String) : List String :=
   str.split (· == ' ') |>.filter (·.trim ≠ "")
 
 #eval "John likes a dog".toTokens
+
+def List.product.{u, v} {α : Type u} {β : Type v}
+  (as : List α) (bs : List β) : List (α × β) :=
+  as.flatMap fun a => bs.map fun b => (a, b)
+
+#eval [1,2,3].product ["foo", "bar"]

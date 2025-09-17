@@ -125,9 +125,10 @@ def Chart.fillChart (lex : Lexicon) (toks : List String) : Chart := Id.run do
           let lts : List Tree := ch.lookup ls
           let rts : List Tree := ch.lookup rs
 
-          for lt in lts do
-            for rt in rts do
-              ts := applyRules lt rt ++ ts
+          let ts' : List Tree :=  lts.product rts
+            |>.map (fun (lt, rt) => applyRules lt rt)
+            |>.flatten
+          ts := ts' ++ ts
 
         ch' := ch'.insert span ts
       return ch'
