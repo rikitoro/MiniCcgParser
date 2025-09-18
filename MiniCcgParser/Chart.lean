@@ -78,16 +78,6 @@ def Chart.mkBase (lex : Lexicon) (toks : List String)  : Chart := Id.run do
       let trees : List Tree := lex.lookup t |>.map (.Leaf · t)
       ch.insert (i, i + 1) trees
 
-  -- let mut ch : Chart := []
-  -- let mut i : Nat := 0
-  -- -- 左から token を見ていって cell を作って chart に追加 (末尾再帰で書けそう)
-  -- for tok in toks do
-  --   let cs : List Cat := lex.lookup tok
-  --   let ts : List Tree := cs.map (.Leaf · tok)
-  --   ch := ch.insert (i, i + 1) ts
-  --   i  := i + 1
-  -- return ch
-
 #eval
   Chart.mkBase lexicon ["likes"]
 #eval
@@ -125,9 +115,11 @@ def Chart.fillChart (lex : Lexicon) (toks : List String) : Chart := Id.run do
           let lts : List Tree := ch.lookup ls
           let rts : List Tree := ch.lookup rs
 
-          let ts' : List Tree :=  lts.product rts
-            |>.map (fun (lt, rt) => applyRules lt rt)
-            |>.flatten
+          let ts' : List Tree :=
+            lts.flatMap fun lt =>
+            rts.flatMap fun rt =>
+            applyRules lt rt
+
           ts := ts' ++ ts
 
         ch' := ch'.insert span ts
