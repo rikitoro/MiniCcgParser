@@ -108,19 +108,13 @@ def Chart.fillChart (lex : Lexicon) (toks : List String) : Chart := Id.run do
       for span in spans do
         let ⟨i, j⟩ := span
         -- span 左右二つに分割して、導出木を applyRules で結合
-        let mut ts : List Tree := []
-        for k in List.arange (i + 1) j do
-          let ls : Span := (i, k)
-          let rs : Span := (k, j)
-          let lts : List Tree := ch.lookup ls
-          let rts : List Tree := ch.lookup rs
-
-          let ts' : List Tree :=
+        let ts : List Tree :=
+          List.arange (i + 1) j |>.flatMap fun k =>
+            let lts : List Tree := ch.lookup (i, k)
+            let rts : List Tree := ch.lookup (k, j)
             lts.flatMap fun lt =>
             rts.flatMap fun rt =>
             applyRules lt rt
-
-          ts := ts' ++ ts
 
         ch' := ch'.insert span ts
       return ch'
