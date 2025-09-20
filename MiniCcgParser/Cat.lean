@@ -1,5 +1,5 @@
 
-inductive Dir where
+inductive Dir : Type
   | Fwd -- /
   | Bwd -- \
   deriving BEq
@@ -12,7 +12,7 @@ instance : ToString Dir where
   toString := Dir.toString
 
 /-- # 統語範疇 Cat -/
-inductive Cat where
+inductive Cat : Type
   | S
   | NP
   | N
