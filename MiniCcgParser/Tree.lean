@@ -2,7 +2,7 @@ import MiniCcgParser.Cat
 import MiniCcgParser.Util
 
 /-- # 適用ルール -/
-inductive Rule where
+inductive Rule : Type
   | Fa -- forward app (>)
   | Ba -- backward app (<)
   | Fc -- forward func composition (> B)
@@ -15,7 +15,7 @@ def Rule.repr : Rule → String
   | .Bc => "<B"
 
 /-- # 導出木 Tree (Derivation Tree) -/
-inductive Tree where
+inductive Tree : Type
   | Leaf (c : Cat) (token : String)
   | Node (c : Cat) (r : Rule) (left right : Tree)
 
